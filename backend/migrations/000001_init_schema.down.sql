@@ -1,0 +1,14 @@
+DROP TABLE IF EXISTS store_settings;
+DROP TABLE IF EXISTS stock_movements;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS transaction_items;
+DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS invoice_sequences;
+DROP TABLE IF EXISTS shifts;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS units;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS refresh_tokens;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS roles;
+DROP FUNCTION IF EXISTS set_updated_at();

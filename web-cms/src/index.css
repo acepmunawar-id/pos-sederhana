@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* iOS system palette — must stay in sync with mobile/lib/theme/app_colors.dart */
+:root {
+  --primary: 0 122 255;
+  --success: 52 199 89;
+  --danger: 255 59 48;
+  --warning: 255 149 0;
+  --yellow: 255 204 0;
+  --background: 242 242 247;
+  --card: 255 255 255;
+  --text: 0 0 0;
+  --gray: 142 142 147;
+  --separator: 198 198 200;
+  --fill: rgba(118, 118, 128, 0.12);
+  --text-secondary: rgba(60, 60, 67, 0.6);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: 10 132 255;
+    --success: 48 209 88;
+    --danger: 255 69 58;
+    --warning: 255 159 10;
+    --yellow: 255 214 10;
+    --background: 0 0 0;
+    --card: 28 28 30;
+    --text: 255 255 255;
+    --gray: 142 142 147;
+    --separator: 56 56 58;
+    --fill: rgba(118, 118, 128, 0.24);
+    --text-secondary: rgba(235, 235, 245, 0.6);
+    color-scheme: dark;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-background font-sans text-subheadline text-text;
+  }
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+}

@@ -1,0 +1,5 @@
+.env
+/bin/
+/uploads/*
+!/uploads/.gitkeep
+coverage.out

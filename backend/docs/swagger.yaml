@@ -1,0 +1,2559 @@
+basePath: /api/v1
+definitions:
+  apperror.FieldError:
+    properties:
+      field:
+        type: string
+      message:
+        type: string
+    type: object
+  dto.CashierReportResponse:
+    properties:
+      total_sales:
+        type: integer
+      transaction_count:
+        type: integer
+      user_id:
+        type: integer
+      user_name:
+        type: string
+    type: object
+  dto.CategoryRequest:
+    properties:
+      description:
+        maxLength: 500
+        type: string
+      name:
+        maxLength: 100
+        minLength: 2
+        type: string
+    required:
+    - name
+    type: object
+  dto.CategoryResponse:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      product_count:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  dto.ChangePasswordRequest:
+    properties:
+      new_password:
+        maxLength: 72
+        minLength: 8
+        type: string
+      old_password:
+        type: string
+    required:
+    - new_password
+    - old_password
+    type: object
+  dto.CheckoutItem:
+    properties:
+      product_id:
+        example: 1
+        type: integer
+      quantity:
+        example: 2
+        maximum: 10000
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
+  dto.CheckoutPayment:
+    properties:
+      amount:
+        description: Amount handed over by the customer. For CASH it may exceed the
+          bill (change is returned).
+        example: 50000
+        minimum: 0
+        type: integer
+      method:
+        enum:
+        - CASH
+        - QRIS
+        - TRANSFER
+        - DEBIT
+        example: CASH
+        type: string
+      reference_number:
+        maxLength: 100
+        type: string
+    required:
+    - method
+    type: object
+  dto.CheckoutRequest:
+    properties:
+      discount_type:
+        enum:
+        - NOMINAL
+        - PERCENT
+        example: PERCENT
+        type: string
+      discount_value:
+        description: 'NOMINAL: rupiah. PERCENT: basis points (1000 = 10%).'
+        example: 1000
+        minimum: 0
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/dto.CheckoutItem'
+        maxItems: 200
+        minItems: 1
+        type: array
+      note:
+        maxLength: 500
+        type: string
+      payments:
+        items:
+          $ref: '#/definitions/dto.CheckoutPayment'
+        maxItems: 4
+        minItems: 1
+        type: array
+    required:
+    - items
+    - payments
+    type: object
+  dto.CloseShiftRequest:
+    properties:
+      actual_cash:
+        example: 450000
+        minimum: 0
+        type: integer
+      note:
+        maxLength: 500
+        type: string
+    type: object
+  dto.CreateProductRequest:
+    properties:
+      barcode:
+        maxLength: 50
+        type: string
+      category_id:
+        type: integer
+      cost:
+        example: 7000
+        minimum: 0
+        type: integer
+      initial_stock:
+        minimum: 0
+        type: integer
+      is_active:
+        type: boolean
+      min_stock:
+        minimum: 0
+        type: integer
+      name:
+        maxLength: 150
+        minLength: 2
+        type: string
+      price:
+        example: 18000
+        minimum: 0
+        type: integer
+      sku:
+        maxLength: 50
+        minLength: 1
+        type: string
+      unit_id:
+        type: integer
+    required:
+    - category_id
+    - name
+    - sku
+    - unit_id
+    type: object
+  dto.CreateUserRequest:
+    properties:
+      email:
+        maxLength: 150
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      password:
+        maxLength: 72
+        minLength: 8
+        type: string
+      role_id:
+        type: integer
+    required:
+    - email
+    - name
+    - password
+    - role_id
+    type: object
+  dto.DailyPoint:
+    properties:
+      date:
+        example: "2026-10-10"
+        type: string
+      total_revenue:
+        type: integer
+      transaction_count:
+        type: integer
+    type: object
+  dto.DashboardResponse:
+    properties:
+      last_7_days:
+        items:
+          $ref: '#/definitions/dto.DailyPoint'
+        type: array
+      low_stock:
+        items:
+          $ref: '#/definitions/dto.ProductResponse'
+        type: array
+      low_stock_count:
+        type: integer
+      today:
+        $ref: '#/definitions/dto.SalesSummaryResponse'
+      top_products:
+        items:
+          $ref: '#/definitions/dto.TopProductResponse'
+        type: array
+      yesterday:
+        $ref: '#/definitions/dto.SalesSummaryResponse'
+    type: object
+  dto.IDName:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  dto.LoginRequest:
+    properties:
+      email:
+        example: owner@toko.id
+        type: string
+      password:
+        example: owner123
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  dto.LogoutRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  dto.OpenShiftRequest:
+    properties:
+      note:
+        maxLength: 500
+        type: string
+      opening_cash:
+        example: 200000
+        minimum: 0
+        type: integer
+    type: object
+  dto.PaymentMethodResponse:
+    properties:
+      amount:
+        type: integer
+      method:
+        type: string
+      transaction_count:
+        type: integer
+    type: object
+  dto.PaymentResponse:
+    properties:
+      amount:
+        type: integer
+      method:
+        enum:
+        - CASH
+        - QRIS
+        - TRANSFER
+        - DEBIT
+        type: string
+      reference_number:
+        type: string
+      tendered_amount:
+        type: integer
+    type: object
+  dto.ProductRef:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      sku:
+        type: string
+    type: object
+  dto.ProductResponse:
+    properties:
+      barcode:
+        type: string
+      category:
+        $ref: '#/definitions/dto.IDName'
+      cost:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      image_url:
+        type: string
+      is_active:
+        type: boolean
+      is_low_stock:
+        type: boolean
+      min_stock:
+        type: integer
+      name:
+        type: string
+      price:
+        type: integer
+      sku:
+        type: string
+      stock:
+        type: integer
+      unit:
+        $ref: '#/definitions/dto.IDName'
+      updated_at:
+        type: string
+    type: object
+  dto.ReceiptResponse:
+    properties:
+      store:
+        $ref: '#/definitions/dto.StoreSettingResponse'
+      text:
+        description: 32-column plain-text receipt, ready to share
+        type: string
+      transaction:
+        $ref: '#/definitions/dto.TransactionResponse'
+    type: object
+  dto.RefreshRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  dto.RoleResponse:
+    properties:
+      code:
+        example: cashier
+        type: string
+      id:
+        type: integer
+      name:
+        example: Kasir
+        type: string
+    type: object
+  dto.SalesPeriodResponse:
+    properties:
+      cost_total:
+        type: integer
+      discount_total:
+        type: integer
+      gross_profit:
+        type: integer
+      gross_sales:
+        type: integer
+      margin_bp:
+        description: Gross margin in basis points (2500 = 25%).
+        type: integer
+      net_sales:
+        type: integer
+      period:
+        example: "2026-10-10"
+        type: string
+      tax_total:
+        type: integer
+      total_revenue:
+        type: integer
+      transaction_count:
+        type: integer
+    type: object
+  dto.SalesReportResponse:
+    properties:
+      from:
+        type: string
+      group:
+        enum:
+        - daily
+        - monthly
+        type: string
+      rows:
+        items:
+          $ref: '#/definitions/dto.SalesPeriodResponse'
+        type: array
+      summary:
+        $ref: '#/definitions/dto.SalesSummaryResponse'
+      to:
+        type: string
+    type: object
+  dto.SalesSummaryResponse:
+    properties:
+      cost_total:
+        type: integer
+      discount_total:
+        type: integer
+      gross_profit:
+        type: integer
+      gross_sales:
+        type: integer
+      margin_bp:
+        description: Gross margin in basis points (2500 = 25%).
+        type: integer
+      net_sales:
+        type: integer
+      tax_total:
+        type: integer
+      total_revenue:
+        type: integer
+      transaction_count:
+        type: integer
+    type: object
+  dto.ShiftDetailResponse:
+    properties:
+      actual_cash:
+        type: integer
+      cash_difference:
+        type: integer
+      closed_at:
+        type: string
+      closing_note:
+        type: string
+      expected_cash:
+        type: integer
+      id:
+        type: integer
+      opened_at:
+        type: string
+      opening_cash:
+        type: integer
+      opening_note:
+        type: string
+      status:
+        enum:
+        - OPEN
+        - CLOSED
+        type: string
+      summary:
+        $ref: '#/definitions/dto.ShiftSummaryResponse'
+      total_sales:
+        type: integer
+      total_transactions:
+        type: integer
+      user:
+        $ref: '#/definitions/dto.IDName'
+    type: object
+  dto.ShiftResponse:
+    properties:
+      actual_cash:
+        type: integer
+      cash_difference:
+        type: integer
+      closed_at:
+        type: string
+      closing_note:
+        type: string
+      expected_cash:
+        type: integer
+      id:
+        type: integer
+      opened_at:
+        type: string
+      opening_cash:
+        type: integer
+      opening_note:
+        type: string
+      status:
+        enum:
+        - OPEN
+        - CLOSED
+        type: string
+      total_sales:
+        type: integer
+      total_transactions:
+        type: integer
+      user:
+        $ref: '#/definitions/dto.IDName'
+    type: object
+  dto.ShiftSummaryResponse:
+    properties:
+      cash_sales:
+        type: integer
+      expected_cash:
+        type: integer
+      payment_totals:
+        additionalProperties:
+          format: int64
+          type: integer
+        type: object
+      total_sales:
+        type: integer
+      total_transactions:
+        type: integer
+      voided_count:
+        type: integer
+    type: object
+  dto.StockAdjustmentRequest:
+    properties:
+      actual_stock:
+        maximum: 1000000
+        minimum: 0
+        type: integer
+      note:
+        example: Barang rusak
+        maxLength: 500
+        minLength: 3
+        type: string
+      product_id:
+        type: integer
+    required:
+    - note
+    - product_id
+    type: object
+  dto.StockInItem:
+    properties:
+      product_id:
+        type: integer
+      quantity:
+        maximum: 1000000
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
+  dto.StockInRequest:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/dto.StockInItem'
+        maxItems: 100
+        minItems: 1
+        type: array
+      note:
+        example: Pembelian dari Supplier A
+        maxLength: 500
+        type: string
+    required:
+    - items
+    type: object
+  dto.StockMovementResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      note:
+        type: string
+      product:
+        $ref: '#/definitions/dto.ProductRef'
+      quantity:
+        type: integer
+      reference_id:
+        type: integer
+      reference_type:
+        type: string
+      stock_after:
+        type: integer
+      stock_before:
+        type: integer
+      type:
+        enum:
+        - IN
+        - ADJUSTMENT
+        - SALE
+        - VOID
+        type: string
+      user:
+        $ref: '#/definitions/dto.IDName'
+    type: object
+  dto.StoreSettingResponse:
+    properties:
+      address:
+        type: string
+      logo_url:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      receipt_footer:
+        type: string
+      tax_rate_bp:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  dto.TokenResponse:
+    properties:
+      access_token:
+        type: string
+      access_token_expires_at:
+        type: string
+      refresh_token:
+        type: string
+      refresh_token_expires_at:
+        type: string
+      token_type:
+        example: Bearer
+        type: string
+      user:
+        $ref: '#/definitions/dto.UserResponse'
+    type: object
+  dto.TopProductResponse:
+    properties:
+      product_id:
+        type: integer
+      product_name:
+        type: string
+      profit:
+        type: integer
+      quantity:
+        type: integer
+      revenue:
+        type: integer
+      sku:
+        type: string
+    type: object
+  dto.TransactionItemResponse:
+    properties:
+      id:
+        type: integer
+      product_id:
+        type: integer
+      product_name:
+        type: string
+      quantity:
+        type: integer
+      sku:
+        type: string
+      subtotal:
+        type: integer
+      unit_price:
+        type: integer
+    type: object
+  dto.TransactionResponse:
+    properties:
+      cashier:
+        $ref: '#/definitions/dto.IDName'
+      change_amount:
+        type: integer
+      created_at:
+        type: string
+      discount_amount:
+        type: integer
+      discount_type:
+        type: string
+      discount_value:
+        type: integer
+      gross_profit:
+        type: integer
+      id:
+        type: integer
+      invoice_number:
+        example: INV/20261010/0001
+        type: string
+      item_count:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/dto.TransactionItemResponse'
+        type: array
+      note:
+        type: string
+      paid_amount:
+        type: integer
+      payments:
+        items:
+          $ref: '#/definitions/dto.PaymentResponse'
+        type: array
+      shift_id:
+        type: integer
+      status:
+        enum:
+        - COMPLETED
+        - VOIDED
+        type: string
+      subtotal:
+        type: integer
+      tax_amount:
+        type: integer
+      tax_rate_bp:
+        type: integer
+      total:
+        type: integer
+      void_reason:
+        type: string
+      voided_at:
+        type: string
+      voided_by:
+        $ref: '#/definitions/dto.IDName'
+    type: object
+  dto.UnitRequest:
+    properties:
+      abbreviation:
+        maxLength: 10
+        minLength: 1
+        type: string
+      name:
+        maxLength: 50
+        minLength: 1
+        type: string
+    required:
+    - abbreviation
+    - name
+    type: object
+  dto.UnitResponse:
+    properties:
+      abbreviation:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dto.UpdateProductRequest:
+    properties:
+      barcode:
+        maxLength: 50
+        type: string
+      category_id:
+        type: integer
+      cost:
+        minimum: 0
+        type: integer
+      is_active:
+        type: boolean
+      min_stock:
+        minimum: 0
+        type: integer
+      name:
+        maxLength: 150
+        minLength: 2
+        type: string
+      price:
+        minimum: 0
+        type: integer
+      sku:
+        maxLength: 50
+        minLength: 1
+        type: string
+      unit_id:
+        type: integer
+    required:
+    - category_id
+    - name
+    - sku
+    - unit_id
+    type: object
+  dto.UpdateStoreSettingRequest:
+    properties:
+      address:
+        maxLength: 500
+        type: string
+      name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      phone:
+        maxLength: 30
+        type: string
+      receipt_footer:
+        maxLength: 500
+        type: string
+      tax_rate_bp:
+        example: 1100
+        maximum: 10000
+        minimum: 0
+        type: integer
+    required:
+    - name
+    type: object
+  dto.UpdateUserRequest:
+    properties:
+      email:
+        maxLength: 150
+        type: string
+      is_active:
+        type: boolean
+      name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      password:
+        description: Password is optional; when set, the user's password is reset.
+        maxLength: 72
+        minLength: 8
+        type: string
+      role_id:
+        type: integer
+    required:
+    - email
+    - name
+    - role_id
+    type: object
+  dto.UserResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      last_login_at:
+        type: string
+      name:
+        type: string
+      role:
+        $ref: '#/definitions/dto.RoleResponse'
+      updated_at:
+        type: string
+    type: object
+  dto.VoidRequest:
+    properties:
+      reason:
+        example: Salah input pesanan
+        maxLength: 500
+        minLength: 3
+        type: string
+    required:
+    - reason
+    type: object
+  pagination.Meta:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  response.Body:
+    properties:
+      data: {}
+      message:
+        type: string
+      meta:
+        $ref: '#/definitions/pagination.Meta'
+      success:
+        type: boolean
+    type: object
+  response.ErrorBody:
+    properties:
+      errors:
+        items:
+          $ref: '#/definitions/apperror.FieldError'
+        type: array
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+info:
+  contact: {}
+  description: REST API Point of Sale untuk UMKM. Semua nilai uang dalam rupiah (integer),
+    persentase dalam basis point (1100 = 11%).
+  title: POS UMKM API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Masuk dengan email & password. Mengembalikan access token (JWT)
+        dan refresh token.
+      parameters:
+      - description: Kredensial
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.TokenResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+      summary: Login
+      tags:
+      - Auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Refresh token yang akan dicabut
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LogoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Body'
+      security:
+      - BearerAuth: []
+      summary: Logout
+      tags:
+      - Auth
+  /auth/me:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Profil pengguna yang sedang login
+      tags:
+      - Auth
+  /auth/password:
+    put:
+      consumes:
+      - application/json
+      description: Semua sesi lain akan logout setelah password diganti.
+      parameters:
+      - description: Password lama & baru
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Body'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+      security:
+      - BearerAuth: []
+      summary: Ganti password
+      tags:
+      - Auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Tukar refresh token dengan pasangan token baru (rotasi). Refresh
+        token lama tidak berlaku lagi.
+      parameters:
+      - description: Refresh token
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.TokenResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+      summary: Perbarui token
+      tags:
+      - Auth
+  /categories:
+    get:
+      parameters:
+      - default: 1
+        description: Halaman
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Jumlah per halaman
+        in: query
+        name: limit
+        type: integer
+      - description: Cari nama/deskripsi
+        in: query
+        name: search
+        type: string
+      - description: name|created_at
+        in: query
+        name: sort
+        type: string
+      - description: asc|desc
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.CategoryResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar kategori
+      tags:
+      - Categories
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Data kategori
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CategoryResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Tambah kategori
+      tags:
+      - Categories
+  /categories/{id}:
+    delete:
+      parameters:
+      - description: ID kategori
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Body'
+        "409":
+          description: Masih dipakai produk
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+      security:
+      - BearerAuth: []
+      summary: Hapus kategori (soft delete)
+      tags:
+      - Categories
+    get:
+      parameters:
+      - description: ID kategori
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CategoryResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Detail kategori
+      tags:
+      - Categories
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID kategori
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data kategori
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CategoryResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Ubah kategori
+      tags:
+      - Categories
+  /products:
+    get:
+      parameters:
+      - default: 1
+        description: Halaman
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Jumlah per halaman
+        in: query
+        name: limit
+        type: integer
+      - description: Cari nama/SKU/barcode
+        in: query
+        name: search
+        type: string
+      - description: name|sku|price|cost|stock|category|created_at|updated_at
+        in: query
+        name: sort
+        type: string
+      - description: asc|desc
+        in: query
+        name: order
+        type: string
+      - description: Filter kategori
+        in: query
+        name: category_id
+        type: integer
+      - description: Filter status aktif
+        in: query
+        name: is_active
+        type: boolean
+      - description: Hanya stok menipis
+        in: query
+        name: low_stock
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.ProductResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar produk
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Data produk (harga dalam rupiah)
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ProductResponse'
+              type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+      security:
+      - BearerAuth: []
+      summary: Tambah produk
+      tags:
+      - Products
+  /products/{id}:
+    delete:
+      parameters:
+      - description: ID produk
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Body'
+      security:
+      - BearerAuth: []
+      summary: Hapus produk (soft delete)
+      tags:
+      - Products
+    get:
+      parameters:
+      - description: ID produk
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ProductResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Detail produk
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Stok tidak bisa diubah di sini; gunakan endpoint stok masuk / penyesuaian.
+      parameters:
+      - description: ID produk
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data produk
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ProductResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Ubah produk
+      tags:
+      - Products
+  /products/{id}/image:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: ID produk
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: JPG/PNG/WEBP, maks 2 MB
+        in: formData
+        name: image
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ProductResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Unggah gambar produk
+      tags:
+      - Products
+  /products/barcode/{code}:
+    get:
+      parameters:
+      - description: Barcode / SKU
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ProductResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+      security:
+      - BearerAuth: []
+      summary: Cari produk berdasarkan barcode atau SKU
+      tags:
+      - Products
+  /reports/cashiers:
+    get:
+      parameters:
+      - description: YYYY-MM-DD
+        in: query
+        name: date_from
+        type: string
+      - description: YYYY-MM-DD
+        in: query
+        name: date_to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.CashierReportResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Penjualan per kasir
+      tags:
+      - Reports
+  /reports/dashboard:
+    get:
+      description: Penjualan hari ini & kemarin, grafik 7 hari, 5 produk terlaris
+        (7 hari), stok menipis.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.DashboardResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Ringkasan dashboard
+      tags:
+      - Reports
+  /reports/export:
+    get:
+      parameters:
+      - description: sales-daily|sales-monthly|top-products|payment-methods|cashiers
+        in: query
+        name: type
+        required: true
+        type: string
+      - default: xlsx
+        description: csv|xlsx
+        in: query
+        name: format
+        type: string
+      - description: YYYY-MM-DD
+        in: query
+        name: date_from
+        type: string
+      - description: YYYY-MM-DD
+        in: query
+        name: date_to
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - BearerAuth: []
+      summary: Export laporan ke CSV / Excel
+      tags:
+      - Reports
+  /reports/gross-profit:
+    get:
+      description: Laba kotor = (penjualan − diskon) − HPP. Pajak tidak dihitung sebagai
+        pendapatan.
+      parameters:
+      - description: YYYY-MM-DD
+        in: query
+        name: date_from
+        type: string
+      - description: YYYY-MM-DD
+        in: query
+        name: date_to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SalesSummaryResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Laba kotor
+      tags:
+      - Reports
+  /reports/payment-methods:
+    get:
+      parameters:
+      - description: YYYY-MM-DD
+        in: query
+        name: date_from
+        type: string
+      - description: YYYY-MM-DD
+        in: query
+        name: date_to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.PaymentMethodResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Penjualan per metode bayar
+      tags:
+      - Reports
+  /reports/sales:
+    get:
+      parameters:
+      - description: YYYY-MM-DD (default 30 hari terakhir)
+        in: query
+        name: date_from
+        type: string
+      - description: YYYY-MM-DD (default hari ini)
+        in: query
+        name: date_to
+        type: string
+      - default: daily
+        description: daily|monthly
+        in: query
+        name: group
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.SalesReportResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Laporan penjualan harian / bulanan
+      tags:
+      - Reports
+  /reports/top-products:
+    get:
+      parameters:
+      - description: YYYY-MM-DD
+        in: query
+        name: date_from
+        type: string
+      - description: YYYY-MM-DD
+        in: query
+        name: date_to
+        type: string
+      - default: 10
+        description: Jumlah produk (maks 100)
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.TopProductResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Produk terlaris
+      tags:
+      - Reports
+  /roles:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.RoleResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar role
+      tags:
+      - Users
+  /settings:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.StoreSettingResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Pengaturan toko
+      tags:
+      - Settings
+    put:
+      consumes:
+      - application/json
+      description: tax_rate_bp dalam basis point (1100 = 11%).
+      parameters:
+      - description: Pengaturan
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateStoreSettingRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.StoreSettingResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Ubah pengaturan toko
+      tags:
+      - Settings
+  /settings/logo:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: JPG/PNG/WEBP, maks 2 MB
+        in: formData
+        name: logo
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.StoreSettingResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Unggah logo toko
+      tags:
+      - Settings
+  /shifts:
+    get:
+      description: Kasir hanya melihat shift miliknya sendiri.
+      parameters:
+      - default: 1
+        description: Halaman
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Jumlah per halaman
+        in: query
+        name: limit
+        type: integer
+      - description: Cari nama kasir
+        in: query
+        name: search
+        type: string
+      - description: opened_at|closed_at|cashier
+        in: query
+        name: sort
+        type: string
+      - description: asc|desc
+        in: query
+        name: order
+        type: string
+      - description: Filter kasir
+        in: query
+        name: user_id
+        type: integer
+      - description: OPEN|CLOSED
+        in: query
+        name: status
+        type: string
+      - description: YYYY-MM-DD
+        in: query
+        name: date_from
+        type: string
+      - description: YYYY-MM-DD
+        in: query
+        name: date_to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.ShiftResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Riwayat shift
+      tags:
+      - Shifts
+  /shifts/{id}:
+    get:
+      parameters:
+      - description: ID shift
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ShiftDetailResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Detail shift
+      tags:
+      - Shifts
+  /shifts/current:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ShiftDetailResponse'
+              type: object
+        "404":
+          description: Belum buka shift
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+      security:
+      - BearerAuth: []
+      summary: Shift yang sedang berjalan
+      tags:
+      - Shifts
+  /shifts/current/close:
+    post:
+      consumes:
+      - application/json
+      description: Hitung kas yang diharapkan (kas awal + penjualan tunai) dan selisih
+        terhadap kas aktual.
+      parameters:
+      - description: Kas aktual di laci
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CloseShiftRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ShiftDetailResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Tutup shift
+      tags:
+      - Shifts
+  /shifts/open:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Kas awal
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.OpenShiftRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ShiftResponse'
+              type: object
+        "409":
+          description: Masih ada shift terbuka
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+      security:
+      - BearerAuth: []
+      summary: Buka shift
+      tags:
+      - Shifts
+  /stock/adjustments:
+    post:
+      consumes:
+      - application/json
+      description: Set stok ke jumlah fisik hasil hitung. Selisih dicatat sebagai
+        pergerakan ADJUSTMENT.
+      parameters:
+      - description: Stok aktual & alasan
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.StockAdjustmentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.StockMovementResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Penyesuaian stok (stock opname)
+      tags:
+      - Stock
+  /stock/in:
+    post:
+      consumes:
+      - application/json
+      description: Tambah stok satu atau beberapa produk sekaligus (mis. barang datang
+        dari supplier).
+      parameters:
+      - description: Daftar produk & jumlah
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.StockInRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.StockMovementResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Stok masuk
+      tags:
+      - Stock
+  /stock/low:
+    get:
+      description: Produk aktif dengan stok <= stok minimum.
+      parameters:
+      - default: 1
+        description: Halaman
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Jumlah per halaman
+        in: query
+        name: limit
+        type: integer
+      - description: Cari nama/SKU
+        in: query
+        name: search
+        type: string
+      - description: Filter kategori
+        in: query
+        name: category_id
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.ProductResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Produk dengan stok menipis
+      tags:
+      - Stock
+  /stock/movements:
+    get:
+      parameters:
+      - default: 1
+        description: Halaman
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Jumlah per halaman
+        in: query
+        name: limit
+        type: integer
+      - description: Cari nama/SKU produk atau catatan
+        in: query
+        name: search
+        type: string
+      - description: created_at|quantity|product|type
+        in: query
+        name: sort
+        type: string
+      - description: asc|desc
+        in: query
+        name: order
+        type: string
+      - description: Filter produk
+        in: query
+        name: product_id
+        type: integer
+      - description: IN|ADJUSTMENT|SALE|VOID
+        in: query
+        name: type
+        type: string
+      - description: YYYY-MM-DD
+        in: query
+        name: date_from
+        type: string
+      - description: YYYY-MM-DD
+        in: query
+        name: date_to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.StockMovementResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Riwayat pergerakan stok
+      tags:
+      - Stock
+  /transactions:
+    get:
+      description: Kasir hanya melihat transaksinya sendiri.
+      parameters:
+      - default: 1
+        description: Halaman
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Jumlah per halaman
+        in: query
+        name: limit
+        type: integer
+      - description: Cari nomor invoice / nama kasir
+        in: query
+        name: search
+        type: string
+      - description: created_at|total|invoice_number|cashier
+        in: query
+        name: sort
+        type: string
+      - description: asc|desc
+        in: query
+        name: order
+        type: string
+      - description: COMPLETED|VOIDED
+        in: query
+        name: status
+        type: string
+      - description: Filter kasir
+        in: query
+        name: user_id
+        type: integer
+      - description: Filter shift
+        in: query
+        name: shift_id
+        type: integer
+      - description: CASH|QRIS|TRANSFER|DEBIT
+        in: query
+        name: method
+        type: string
+      - description: YYYY-MM-DD
+        in: query
+        name: date_from
+        type: string
+      - description: YYYY-MM-DD
+        in: query
+        name: date_to
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.TransactionResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar transaksi
+      tags:
+      - Transactions
+  /transactions/{id}:
+    get:
+      parameters:
+      - description: ID transaksi
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.TransactionResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Detail transaksi
+      tags:
+      - Transactions
+  /transactions/{id}/receipt:
+    get:
+      description: Data toko + transaksi + teks struk 32 kolom yang siap dibagikan
+        / dicetak.
+      parameters:
+      - description: ID transaksi
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ReceiptResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Data struk
+      tags:
+      - Transactions
+  /transactions/{id}/void:
+    post:
+      consumes:
+      - application/json
+      description: Hanya Owner/Admin. Stok semua item otomatis dikembalikan.
+      parameters:
+      - description: ID transaksi
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Alasan pembatalan
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.VoidRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.TransactionResponse'
+              type: object
+        "409":
+          description: Sudah di-void
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+      security:
+      - BearerAuth: []
+      summary: Void transaksi
+      tags:
+      - Transactions
+  /transactions/checkout:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Atomic: simpan transaksi, item, pembayaran, kurangi stok, catat pergerakan stok.
+        Kirim header Idempotency-Key unik per transaksi (mis. UUID). Request ulang dengan key yang sama
+        mengembalikan transaksi yang sama (HTTP 200) tanpa membuat transaksi baru.
+        discount_value untuk PERCENT dalam basis point (1000 = 10%).
+      parameters:
+      - description: Kunci unik transaksi (8–100 karakter)
+        in: header
+        name: Idempotency-Key
+        required: true
+        type: string
+      - description: Keranjang & pembayaran
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CheckoutRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Replay idempotent
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.TransactionResponse'
+              type: object
+        "201":
+          description: Transaksi baru
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.TransactionResponse'
+              type: object
+        "422":
+          description: Stok tidak cukup / pembayaran kurang / belum buka shift
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+      security:
+      - BearerAuth: []
+      summary: Checkout (buat transaksi penjualan)
+      tags:
+      - Transactions
+  /units:
+    get:
+      parameters:
+      - default: 1
+        description: Halaman
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Jumlah per halaman
+        in: query
+        name: limit
+        type: integer
+      - description: Cari nama/singkatan
+        in: query
+        name: search
+        type: string
+      - description: name|abbreviation|created_at
+        in: query
+        name: sort
+        type: string
+      - description: asc|desc
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.UnitResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar satuan
+      tags:
+      - Units
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Data satuan
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UnitRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UnitResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Tambah satuan
+      tags:
+      - Units
+  /units/{id}:
+    delete:
+      parameters:
+      - description: ID satuan
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Body'
+      security:
+      - BearerAuth: []
+      summary: Hapus satuan (soft delete)
+      tags:
+      - Units
+    get:
+      parameters:
+      - description: ID satuan
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UnitResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Detail satuan
+      tags:
+      - Units
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID satuan
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data satuan
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UnitRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UnitResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Ubah satuan
+      tags:
+      - Units
+  /users:
+    get:
+      parameters:
+      - default: 1
+        description: Halaman
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Jumlah per halaman (maks 100)
+        in: query
+        name: limit
+        type: integer
+      - description: Cari nama/email
+        in: query
+        name: search
+        type: string
+      - description: name|email|created_at|last_login_at
+        in: query
+        name: sort
+        type: string
+      - description: asc|desc
+        in: query
+        name: order
+        type: string
+      - description: owner|admin|cashier
+        in: query
+        name: role
+        type: string
+      - description: Filter status aktif
+        in: query
+        name: is_active
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/dto.UserResponse'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Daftar pengguna
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Data pengguna
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+      security:
+      - BearerAuth: []
+      summary: Tambah pengguna
+      tags:
+      - Users
+  /users/{id}:
+    delete:
+      parameters:
+      - description: ID pengguna
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Body'
+      security:
+      - BearerAuth: []
+      summary: Hapus pengguna (soft delete)
+      tags:
+      - Users
+    get:
+      parameters:
+      - description: ID pengguna
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorBody'
+      security:
+      - BearerAuth: []
+      summary: Detail pengguna
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID pengguna
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Data pengguna
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Body'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UserResponse'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Ubah pengguna
+      tags:
+      - Users
+securityDefinitions:
+  BearerAuth:
+    description: 'Format: "Bearer {access_token}"'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
